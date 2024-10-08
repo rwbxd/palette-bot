@@ -8,14 +8,14 @@ import re
 guild_ids = sys.argv[1:]
 bot = discord.Bot()
 
-# we need to limit the guilds for testing purposes
-# so other users wouldn't see the command that we're testing
-
-
 @bot.event
 async def on_ready():
     print("Palette Bot is up!")
     print(f"We have logged in as {bot.user}")
+
+@bot.slash_command(description="Give your name a random color", guild_ids=guild_ids)
+async def colormerandom(ctx: discord.ApplicationContext):
+    await color_user(ctx, ctx.user, os.urandom(3).hex())
 
 
 @bot.slash_command(description="Give your name a color", guild_ids=guild_ids)
@@ -25,9 +25,10 @@ async def colorme(ctx: discord.ApplicationContext, color: str):
 
 async def color_user(
     ctx: discord.ApplicationContext, user, color: str
-):  # a slash command will be created with the name "ping"
-    if re.search("^[a-f0-9]{3}$|^[a-f0-9]{6}$", color.strip(), re.IGNORECASE):
-        color = "#" + color.strip()
+):
+    color = color.strip().replace(" ", "")
+    if re.search("^[a-f0-9]{3}$|^[a-f0-9]{6}$", color, re.IGNORECASE):
+        color = "#" + color
 
     try:
         role_color = colour.Color(color)
