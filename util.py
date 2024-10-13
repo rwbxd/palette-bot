@@ -28,6 +28,15 @@ async def create_new_role(
         return new_role
 
 
+async def delete_role(role: discord.Role) -> bool:
+    try:
+        await role.delete()
+        return True
+    except:
+        logError(f"Failed to delete role {role.name}")
+        return False
+
+
 async def errorAndRespond(ctx: discord.ApplicationContext, message: str):
     logError(message)
     return await ctx.respond(f"{message}, please try again in a few seconds")

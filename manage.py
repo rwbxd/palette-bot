@@ -1,5 +1,5 @@
 import discord
-from util import errorAndRespond, logAndRespond, logError
+from util import delete_role, errorAndRespond, logAndRespond
 
 
 async def clean_empty_color_roles(ctx: discord.ApplicationContext):
@@ -7,18 +7,20 @@ async def clean_empty_color_roles(ctx: discord.ApplicationContext):
         assert (
             type(ctx.guild) is discord.Guild
         ), "Encountered an issue accessing the Discord guild"
+
         empty_color_roles = [
             role
             for role in ctx.guild.roles
             if role.name.startswith("#") and len(role.members) == 0
         ]
-        counter = 0
-        for role in empty_color_roles:
-            try:
-                await role.delete()
-                counter += 1
-            except:
-                logError(f"Failed to delete role {role.name}")
-        return await logAndRespond(ctx, f"Cleaned up {counter} empty color roles!")
+        deleted_roles: list[str] = [
+            role.name for role in empty_color_roles if await delete_role(role)
+        ]
+
+        return await logAndRespond(
+            ctx,
+            f"Cleaned up {len(deleted_roles)} empty color roles:\n"
+            + "\n".join(deleted_roles),
+        )
     except AssertionError as errorMessage:
         return await errorAndRespond(ctx, errorMessage)
