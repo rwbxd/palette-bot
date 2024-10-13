@@ -19,16 +19,19 @@ async def on_ready():
 
 @bot.slash_command(description="Give your name a random color", guild_ids=guild_ids)
 async def colormerandom(ctx: discord.ApplicationContext):
+    await ctx.defer(ephemeral=True, invisible=False)
     await color_user(ctx, ctx.user, os.urandom(3).hex())
 
 
 @bot.slash_command(description="Give your name a color", guild_ids=guild_ids)
 async def colorme(ctx: discord.ApplicationContext, color: str):
+    await ctx.defer(ephemeral=True, invisible=False)
     await color_user(ctx, ctx.user, color)
 
 
 @bot.slash_command(description="Clean unused colors", guild_ids=guild_ids)
 async def cleanbrushes(ctx: discord.ApplicationContext):
+    await ctx.defer(ephemeral=True, invisible=False)
     await clean_empty_color_roles(ctx)
 
 
