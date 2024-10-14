@@ -1,29 +1,31 @@
 import discord
 import re
 import colour
-from util import create_new_role, errorAndRespond, logInfo
+from util import create_new_role, error_and_respond, log_info
 
 
 async def color_user(
-    ctx: discord.ApplicationContext, user: discord.Member | discord.User, color: str
+    ctx: discord.ApplicationContext,
+    user: discord.Member | discord.User,
+    color_string: str,
 ):
     try:
         assert (
             type(ctx.guild) is discord.Guild
         ), "Encountered an issue accessing the Discord guild"
 
-        color = color.strip().replace(" ", "")
-        if re.search("^[a-f0-9]{3}$|^[a-f0-9]{6}$", color, re.IGNORECASE):
-            color = "#" + color
+        color_string = color_string.strip().replace(" ", "")
+        if re.search("^[a-f0-9]{3}$|^[a-f0-9]{6}$", color_string, re.IGNORECASE):
+            color_string = "#" + color_string
 
         try:
-            role_color = colour.Color(color)
+            role_color = colour.Color(color_string)
         except ValueError:
             return await ctx.respond(
-                f"Didn't recognize color: {color} - try something else, or a specific hex code!"
+                f"Didn't recognize color: {color_string} - try something else, or a specific hex code!"
             )
 
-        logInfo(
+        log_info(
             f"Coloring {user.name} the color {role_color.web} ({role_color.get_hex()})"
         )
 
@@ -35,8 +37,8 @@ async def color_user(
             None,
         ) or await create_new_role(ctx.guild, role_color)
         if desired_color_role is None:
-            return await errorAndRespond(
-                ctx, f"Failed to create new role for color: {color}"
+            return await error_and_respond(
+                ctx, f"Failed to create new role for color: {color_string}"
             )
 
         await user.remove_roles(*all_color_roles)
@@ -44,4 +46,4 @@ async def color_user(
         return await ctx.respond(f"Colored you {role_color.web}!")
 
     except AssertionError as errorMessage:
-        return await errorAndRespond(ctx, errorMessage)
+        return await error_and_respond(ctx, errorMessage)

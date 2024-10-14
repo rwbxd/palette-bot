@@ -3,6 +3,7 @@ import os
 import sys
 from create import color_user
 from manage import clean_empty_color_roles
+from modify import modify_hsv, modify_rgb
 
 intents = discord.Intents.default()
 intents.members = True
@@ -33,6 +34,28 @@ async def colorme(ctx: discord.ApplicationContext, color: str):
 async def cleanbrushes(ctx: discord.ApplicationContext):
     await ctx.defer(ephemeral=True, invisible=False)
     await clean_empty_color_roles(ctx)
+
+
+@bot.slash_command(description="Modify your current color", guild_ids=guild_ids)
+async def set_hsv(
+    ctx: discord.ApplicationContext,
+    hue: float = None,
+    saturation: float = None,
+    value: float = None,
+):
+    await ctx.defer(ephemeral=True, invisible=False)
+    await modify_hsv(ctx, hue, saturation, value)
+
+
+@bot.slash_command(description="Modify your current color", guild_ids=guild_ids)
+async def set_rgb(
+    ctx: discord.ApplicationContext,
+    r: float = None,
+    g: float = None,
+    b: float = None,
+):
+    await ctx.defer(ephemeral=True, invisible=False)
+    await modify_rgb(ctx, r, g, b)
 
 
 bot.run(
