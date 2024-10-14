@@ -20,9 +20,7 @@ async def clean_empty_color_roles(ctx: discord.ApplicationContext):
         return await logAndRespond(
             ctx,
             f"Cleaned up {len(deleted_roles)} empty color roles"
-            + (":\n" + "\n".join(deleted_roles))
-            if len(deleted_roles) != 0
-            else ".",
+            + (":\n" + "\n".join(deleted_roles) if len(deleted_roles) != 0 else "."),
         )
     except AssertionError as errorMessage:
         return await errorAndRespond(ctx, errorMessage)
